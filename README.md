@@ -7,6 +7,7 @@
 - Autenticacion con Tokens
 - Bcrypt para Hasear Contraseñas
 - Uso de Json Web Tokens
+- dotenv para las variables de enorno
 
 # Rutas
 - Rutas de Login y creacion de usuarios (register)
