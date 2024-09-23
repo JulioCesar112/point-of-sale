@@ -8,7 +8,7 @@ const config = require("./config")
 
 
 
-app.get("/", (req,res) => {
+app.get("/api/v1/users", (req,res) => {
   res.status(200).json({message:"OK!"})
 })
 
