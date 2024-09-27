@@ -3,9 +3,16 @@ const app = express()
 const cors = require("cors")
 const port = 9000
 app.use(cors())
+const db = require("./utils/database")
 
 const config = require("./config")
 
+db.authenticate()
+.then(() => console.log('Connection to the database has been established successfully.'))
+.catch(err => console.log('Unable to connect to the database:', err))
+db.sync({alter:true})
+.then(() => console.log("DB Synced"))
+.catch(err => console.log("ERRO!",err))
 
 
 app.get("/api/v1/users", (req,res) => {

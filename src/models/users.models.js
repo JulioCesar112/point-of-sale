@@ -34,7 +34,7 @@ const Users = db.define("users", {
     allowNull: false,
     unique:true
   },
-  bithday: {
+  birthday: {
     type: DataTypes.DATEONLY,
     allowNull: false
   },
