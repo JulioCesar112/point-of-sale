@@ -6,6 +6,9 @@ app.use(cors())
 const db = require("./utils/database")
 
 const config = require("./config")
+const userRouter = requre("./users/users.router.js")
+
+app.use("api/v1/users",userRouter)
 
 db.authenticate()
 .then(() => console.log('Connection to the database has been established successfully.'))
@@ -15,7 +18,7 @@ db.sync({alter:true})
 .catch(err => console.log("ERRO!",err))
 
 
-app.get("/api/v1/users", (req,res) => {
+app.get("/", (req,res) => {
   res.status(200).json({message:"OK!"})
 })
 
