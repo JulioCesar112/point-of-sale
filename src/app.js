@@ -3,12 +3,13 @@ const app = express()
 const cors = require("cors")
 const port = 9000
 app.use(cors())
+app.use(express.json());
 const db = require("./utils/database")
 
 const config = require("./config")
-const userRouter = requre("./users/users.router.js")
+const userRouter = require("./users/users.router.js")
 
-app.use("api/v1/users",userRouter)
+app.use("/api/v1/users",userRouter)
 
 db.authenticate()
 .then(() => console.log('Connection to the database has been established successfully.'))

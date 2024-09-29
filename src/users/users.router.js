@@ -4,7 +4,7 @@ const userServices = require("./users.services"); // Import user service functio
 
 //! Root Routes
 router.get("/", userServices.getAllUsers); // Route to get all users
-
+router.post("/", userServices.registerUser)
 //! Dynamic Routes
 router.route("/:id") // Define routes that require an ID parameter
   .get(userServices.getUserById)      // Route to get a user by ID

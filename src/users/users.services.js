@@ -3,8 +3,8 @@ const usersControllers = require("./users.controllers")
 
 const getAllUsers = (req, res) => {
   usersControllers.getAllUsers()
-    .then(res => {
-      res.status(200).json(res)
+    .then(data => {
+      res.status(200).json(data)
     })
     .catch(err => {
       console.error(err); // Registrar el error para depuración
@@ -64,15 +64,11 @@ const deleteUser = (req, res) => {
 }
 
 const registerUser = (req, res) => {
-  const { firstName, lastName, phone, birthday, password } = req.body;
+  const { firstName, lastName, phone, email, birthday, password } = req.body;
 
   // Validación de campos obligatorios
-  if (!firstName || !lastName || !phone || !birthday || !password) {
-    return res.status(400).json({ message: "All fields are required" });
-  }
-
-  // Llama a la función del controlador para crear el usuario
-  usersControllers.createUser({ firstName, lastName, phone, birthday, password })
+  if (firstName && lastName && phone && email && birthday && password) {
+    usersControllers.createUser({ firstName, lastName, phone, email, birthday, password })
     .then(newUser => {
       res.status(201).json({ message: "User registered successfully", user: newUser });
     })
@@ -80,6 +76,12 @@ const registerUser = (req, res) => {
       console.error(err);
       res.status(500).json({ message: "An error occurred while registering the user" });
     });
+  } else {
+    res.status(500).json({message:"error"})
+  }
+
+  // Llama a la función del controlador para crear el usuario
+  
 };
 
 

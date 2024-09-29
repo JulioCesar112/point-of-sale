@@ -4,9 +4,9 @@ const config = require("../config")
 const db = new Sequelize(config.db.dbName, config.db.username, config.db.password, {
   host: config.db.host,
   dialect: "postgres",
-  dialectOptions: {
-    schemas: ['public'] // Especifica el esquema a usar
-  }
+  define: {
+    schema: 'public',
+  },
 });
 
 // const db = new Sequelize({
