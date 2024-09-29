@@ -4,9 +4,14 @@ const config = require("../config")
 const db = new Sequelize(config.db.dbName, config.db.username, config.db.password, {
   host: config.db.host,
   dialect: "postgres",
-  define: {
-    schema: 'public',
-  },
+  dialectOptions:
+    process.env.NODE_ENV === "production"
+      ? {
+        ssl: {
+          require: true,
+          rejectUnauthorized: false
+        }
+      } : {}
 });
 
 // const db = new Sequelize({
