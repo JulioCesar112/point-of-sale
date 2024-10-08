@@ -4,3 +4,13 @@
 //* Recovery password
 //* Verify User
 
+const express = require("express")
+const router = express.Router() 
+
+const usersServices = require("../users/users.services")
+// ? prefijo 
+// ? /api/v1/auth
+
+router.post("/register", usersServices.registerUser)
+
+module.exports = router
