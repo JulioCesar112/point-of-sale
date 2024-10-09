@@ -1,9 +1,14 @@
 const express = require("express"); // Import the Express framework
 const router = express.Router(); // Create a new router instance
 const userServices = require("./users.services"); // Import user service functions
+//! Rutas protegidas
+const passport = require("passport")
+require("../middlewares/auth.middleware")(passport)
+
 
 //! Root Routes
-router.get("/", userServices.getAllUsers); // Route to get all users
+router.get("/", passport.authenticate("jwt", { session: false }), userServices.getAllUsers);
+// router.get("/", userServices.getAllUsers)
 router.post("/", userServices.registerUser)
 //! Dynamic Routes
 router.route("/:id") // Define routes that require an ID parameter

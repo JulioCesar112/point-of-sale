@@ -15,11 +15,10 @@ const login = async (req, res) => {
         id: result.user.id,
         email: result.user.email,
       },
-      config.jwtsecret,
-      {expiresIn: "1h"}
+        config.jwtsecret
       )
 
-      return res.status(200).json({token })
+      return res.status(200).json({ token })
 
     } else {
 
