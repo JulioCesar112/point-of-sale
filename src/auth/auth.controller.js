@@ -2,6 +2,7 @@ const userControllers = require("../users/users.controllers");
 const { comparePassword } = require("../utils/crypto");
 
 const loginUser = async (email, password) => {
+
   if (!email || !password) {
     return { success: false, message: 'Email and password are required.' };
   }
@@ -9,7 +10,10 @@ const loginUser = async (email, password) => {
   try {
     const user = await userControllers.getUserByEmail(email);
     if (!user) {
-      return { success: false, message: 'User not found.' };
+      return {
+        success: false,
+        message: 'User not found.'
+      };
     }
 
     const verifyPassword = comparePassword(password, user.password);
@@ -24,4 +28,7 @@ const loginUser = async (email, password) => {
   }
 };
 
-module.exports = loginUser;
+
+module.exports = {
+  loginUser
+};
