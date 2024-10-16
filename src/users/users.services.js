@@ -27,60 +27,104 @@ const getUserById = async (req, res) => {
   }
 };
 
-const patchUser = (req, res) => {
-  const id = req.params.id
-  const { firsName, lastName, phone, birthday, password } = req.body
+const patchUser = async (req, res) => {
+  const id = req.params.id;
+  const { firstName, lastName, phone, birthday, password } = req.body;
 
-  usersControllers.updateUser(id, { firsName, lastName, phone, birthday, password })
-    .then(data => {
-      if (data[0]) {
-        res.status(200).json({ Message: `User with id: ${id} edited Succesfully` })
-      } else {
-        res.status(404).json({ message: "User not found" })
-      }
-    })
-    .catch(err => {
-      res.status(500).json({ message: "An error occurred while updating the user" });
-    })
+  try {
+    const data = await usersControllers.updateUser(id, { firstName, lastName, phone, birthday, password });
+    if (data[0]) {
+      res.status(200).json({ message: `User with id: ${id} edited successfully` });
+    } else {
+      res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred while updating the user" });
+  }
+};
 
-}
 
-const deleteUser = (req, res) => {
-  const id = req.params.id
+const deleteUser = async (req, res) => {
+  const id = req.params.id;
 
-  usersControllers.deleteUsersById(id)
-    .then((data) => {
-      if (data) {
-        res.status(204).json({ message: `User has been deleded` })
-      } else {
-        res.status(404).json({ message: `User whit ID ${id} not found` })
-      }
-    })
-    .catch(err => {
-      res.status(500).json({ message: 'An error occurred while deleting the user' })
-    })
-}
+  try {
+    const data = await usersControllers.deleteUsersById(id);
+    if (data) {
+      return res.status(204).end(); // 204 No Content, no hace falta un JSON
+    } else {
+      return res.status(404).json({ message: `User with ID ${id} not found` });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred while deleting the user' });
+  }
+};
 
-const registerUser = (req, res) => {
+
+const registerUser = async (req, res) => {
   const { firstName, lastName, phone, email, birthday, password } = req.body;
 
-  // Validación de campos obligatorios
-  if (firstName && lastName && phone && email && birthday && password) {
-    usersControllers.createUser({ firstName, lastName, phone, email, birthday, password })
-      .then(newUser => {
-        res.status(201).json({ message: "User registered successfully", user: newUser });
-      })
-      .catch(err => {
-        console.error(err);
-        res.status(500).json({ message: "An error occurred while registering the user" });
-      });
-  } else {
-    res.status(500).json({ message: "error" })
+  if (!firstName || !lastName || !phone || !email || !birthday || !password) {
+    return res.status(400).json({ message: "All fields are required" });
   }
 
-  // Llama a la función del controlador para crear el usuario
-
+  try {
+    const newUser = await usersControllers.createUser({ firstName, lastName, phone, email, birthday, password });
+    return res.status(201).json({ message: "User registered successfully", user: newUser });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "An error occurred while registering the user" });
+  }
 };
+
+
+//! My user Services
+
+const getMyUser = async (req, res) => {
+  const id = req.user.id
+
+  try {
+    const data = await usersControllers.getUserById(id);
+    if (data) {
+      return res.status(200).json(data);
+    } else {
+      return res.status(404).json({ message: `User with ID ${id} not found.` });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "An error occurred while retrieving the user." });
+  }
+}
+
+const updateMyUser = async (req, res) => {
+  const id = req.user.id
+  const { firstName, lastName, phone, birthday, password } = req.body
+
+  try {
+    const data = await usersControllers.updateUser(id, { firstName, lastName, phone, birthday, password });
+    if (data[0]) {
+      res.status(200).json({ message: `Your user was edited successfuly` });
+    } else {
+      res.status(400).json({ message: "error" })
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred while updating the user" });
+  }
+}
+
+const deleteMyUser = async (req, res) => {
+  const id = req.user.id;
+
+  try {
+    await usersControllers.deleteUsersById(id, {status:"inactive"});
+    return res.status(200).json({ message: `your user was deleted successfuly` });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "An error occurred while deleting the user" });
+  }
+}
 
 
 module.exports = {
@@ -88,5 +132,9 @@ module.exports = {
   getUserById,
   patchUser,
   deleteUser,
-  registerUser
+  registerUser,
+  //
+  getMyUser,
+  updateMyUser,
+  deleteMyUser
 }

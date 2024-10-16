@@ -21,8 +21,7 @@ const login = async (req, res) => {
       return res.status(200).json({ token })
 
     } else {
-
-      return res.status(401).json({ message: result.message })
+      return res.status(400).json(result)
     }
 
 

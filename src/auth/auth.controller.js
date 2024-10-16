@@ -20,8 +20,8 @@ const loginUser = async (email, password) => {
     if (verifyPassword) {
       return { success: true, user };
     }
+    return { success: false, message: "Invalid password." };
 
-    return { success: false, message: 'Invalid credentials.' };
   } catch (error) {
     console.error('Login error:', error);
     return { success: false, message: 'An error occurred. Please try again.' };

@@ -18,7 +18,7 @@ module.exports = (passport) => {
   passport.use(
     new JwtStrategy(options, async (jwtPayload, done) => {
       try {
-        const user = await usersControllers.deleteUsersById(jwtPayload.id);
+        const user = await usersControllers.getUserById(jwtPayload.id);
         if (!user) {
           return done(null, false, { message: 'User not found' });
         }
