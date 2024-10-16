@@ -18,6 +18,7 @@ const db = require("./utils/database")
 */
 const userRouter = require("./users/users.router")
 const authRouter = require("./auth/auth.router")
+const initModels = require("./models/initModels")
 
 const app = express()
 
@@ -36,6 +37,7 @@ const initDatabase = async () => {
     console.log('Connection to the database has been established successfully.');
     await db.sync({ alter: true });
     console.log("DB Synced");
+    await initModels()
   } catch (err) {
     console.error('Unable to connect to the database:', err);
   }

@@ -14,12 +14,5 @@ const db = new Sequelize(config.db.dbName, config.db.username, config.db.passwor
       } : {}
 });
 
-// const db = new Sequelize({
-//   dialect: "postgres",
-//   host: config.db.host,
-//   username: config.db.username,
-//   database: config.db.dbName,
-//   password: config.db.password,
-// })
 
 module.exports = db
