@@ -6,8 +6,8 @@
 
 
 const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
-const config = require("../config");
-const usersControllers = require("../users/users.controllers");
+const config = require("../config/env");
+const userController = require("../controllers/userController");
 
 module.exports = (passport) => {
   const options = {
@@ -18,7 +18,7 @@ module.exports = (passport) => {
   passport.use(
     new JwtStrategy(options, async (jwtPayload, done) => {
       try {
-        const user = await usersControllers.getUserById(jwtPayload.id);
+        const user = await userController.getUserById(jwtPayload.id);
         if (!user) {
           return done(null, false, { message: 'User not found' });
         }

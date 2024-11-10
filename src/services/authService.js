@@ -1,6 +1,6 @@
-const { loginUser } = require("./auth.controller")
+const { loginUser } = require("../controllers/authController")
 const jwt = require("jsonwebtoken")
-const config = require("../config")
+const config = require("../config/env")
 
 
 const login = async (req, res) => {
@@ -14,6 +14,7 @@ const login = async (req, res) => {
       const token = jwt.sign({
         id: result.user.id,
         email: result.user.email,
+        role:result.user.role
       },
         config.jwtsecret
       )

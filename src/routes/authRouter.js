@@ -7,12 +7,12 @@
 const express = require("express")
 const router = express.Router() 
 
-const usersServices = require("../users/users.services")
-const authServices = require("./auth.services")
+const userService = require("../services/userService")
+const authService = require("../services/authService")
 // ? prefijo 
 // ? /api/v1/auth
 
-router.post("/register", usersServices.registerUser)
-router.post("/login", authServices.login)
+router.post("/register", userService.registerUser)
+router.post("/login", authService.login)
 
 module.exports = router

@@ -1,4 +1,4 @@
-const userControllers = require("../users/users.controllers");
+const userControllers = require("../controllers/userController");
 const { comparePassword } = require("../utils/crypto");
 
 const loginUser = async (email, password) => {

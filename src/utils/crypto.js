@@ -1,17 +1,23 @@
 const bcrypt = require("bcrypt")
+const saltRounds = 10
 
-const hashPassword = (plainPassword) => {
-  const hashedPassword = bcrypt.hashSync(plainPassword,10)
-  return hashedPassword
+const hashPassword = async (plainPassword) => {
+  try {
+    const hashedPassword = await bcrypt.hash(plainPassword,saltRounds)
+    return hashedPassword
+  } catch (error) {
+    console.error("Error hashing the password:",error)
+  }
 }
 
-const comparePassword = (plainPassword, hashedPassword) =>{
-  const compare = bcrypt.compareSync(plainPassword,hashedPassword)
-  return compare
+const comparePassword = async ( plainPassword, hashedPassword) => {
+  try {
+    const isMatch = await bcrypt.compare(plainPassword,hashedPassword)
+    return isMatch
+  } catch (error) {
+    console.error("Error comparing passwords:", error)
+  }
 }
-// este es un ejemplo de como se estara utilizando o como fuciona bcrypt
-// console.log(hashPassword("root"))
-// console.log(comparePassword("root",`$2b$10$.mlNiugEk1S8F9YsvIfXyuJDEj85eLJ7NM6gt4IckDom.44zt0DrO`))
 
 module.exports = {
   hashPassword,

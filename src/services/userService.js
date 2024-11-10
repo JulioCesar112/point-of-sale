@@ -1,9 +1,9 @@
-const usersControllers = require("./users.controllers")
+const userController = require("../controllers/userController")
 
 
 const getAllUsers = async (req, res) => {
   try {
-    const data = await usersControllers.getAllUsers();
+    const data = await userController.getAllUsers();
     res.status(200).json(data);
   } catch (err) {
     console.error(err); // Registrar el error para depuración
@@ -15,7 +15,7 @@ const getUserById = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const data = await usersControllers.getUserById(id);
+    const data = await userController.getUserById(id);
     if (data) {
       return res.status(200).json(data);
     } else {
@@ -32,7 +32,7 @@ const patchUser = async (req, res) => {
   const { firstName, lastName, phone, birthday, password } = req.body;
 
   try {
-    const data = await usersControllers.updateUser(id, { firstName, lastName, phone, birthday, password });
+    const data = await userController.updateUser(id, { firstName, lastName, phone, birthday, password });
     if (data[0]) {
       res.status(200).json({ message: `User with id: ${id} edited successfully` });
     } else {
@@ -49,14 +49,14 @@ const deleteUser = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const data = await usersControllers.deleteUsersById(id);
+    const data = await userController.deleteUsersById(id);
     if (data) {
       return res.status(204).end(); // 204 No Content, no hace falta un JSON
     } else {
       return res.status(404).json({ message: `User with ID ${id} not found` });
     }
   } catch (err) {
-    console.error(err);
+    console.error("Error en deleteUsers", err.message);
     res.status(500).json({ message: 'An error occurred while deleting the user' });
   }
 };
@@ -70,7 +70,7 @@ const registerUser = async (req, res) => {
   }
 
   try {
-    const newUser = await usersControllers.createUser({ firstName, lastName, phone, email, birthday, password });
+    const newUser = await userController.createUser({ firstName, lastName, phone, email, birthday, password });
     return res.status(201).json({ message: "User registered successfully", user: newUser });
   } catch (err) {
     console.error(err);
@@ -83,11 +83,12 @@ const registerUser = async (req, res) => {
 
 const getMyUser = async (req, res) => {
   const id = req.user.id
+  const isAdmin = req.user
 
   try {
-    const data = await usersControllers.getUserById(id);
+    const data = await userController.getUserById(id);
     if (data) {
-      return res.status(200).json(data);
+      return res.status(200).json({ data: data, res: isAdmin });
     } else {
       return res.status(404).json({ message: `User with ID ${id} not found.` });
     }
@@ -102,7 +103,7 @@ const updateMyUser = async (req, res) => {
   const { firstName, lastName, phone, birthday, password } = req.body
 
   try {
-    const data = await usersControllers.updateUser(id, { firstName, lastName, phone, birthday, password });
+    const data = await userController.updateUser(id, { firstName, lastName, phone, birthday, password });
     if (data[0]) {
       res.status(200).json({ message: `Your user was edited successfuly` });
     } else {
@@ -118,7 +119,7 @@ const deleteMyUser = async (req, res) => {
   const id = req.user.id;
 
   try {
-    await usersControllers.deleteUsersById(id, {status:"inactive"});
+    await userController.deleteUsersById(id, { status: "inactive" });
     return res.status(200).json({ message: `your user was deleted successfuly` });
   } catch (error) {
     console.error(error);
@@ -126,6 +127,26 @@ const deleteMyUser = async (req, res) => {
   }
 }
 
+const updateUserRole = async (req, res) => {
+  const { id } = req.params
+  const { role } = req.body
+  const isAdmin = req.user.role
+
+  const allowedRoles = ["normal", "admin"]
+  if (!allowedRoles.includes(role)) {
+    throw new Error("Invalid role")
+  }
+  
+  try {
+    if (isAdmin !== "admin") {
+      return res.status(401).json({ message: "You do not have permissing to change roles" })
+    }
+    const updateRole = await userController.updateUserRoleServise(id, role)
+    return res.status(200).jsn({message:`User role update to ${updateRole.role}`})
+  } catch (error) {
+    console.error("Error updating user role:", error);
+  }
+}
 
 module.exports = {
   getAllUsers,
@@ -136,5 +157,7 @@ module.exports = {
   //
   getMyUser,
   updateMyUser,
-  deleteMyUser
+  deleteMyUser,
+  //
+  updateUserRole
 }

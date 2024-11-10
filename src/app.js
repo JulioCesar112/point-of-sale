@@ -8,16 +8,16 @@
 
 const express = require("express")
 const cors = require("cors")
-const config = require("./config")
-const db = require("./utils/database")
+const config = require("./config/env")
+const db = require("./config/database")
 
 /*
   Router imports:
   - userRouter: routes for user management
   - authRouter: routes for user authentication
 */
-const userRouter = require("./users/users.router")
-const authRouter = require("./auth/auth.router")
+const userRouter = require("./routes/userRouter")
+const authRouter = require("./routes/authRouter")
 const initModels = require("./models/initModels")
 
 const app = express()
@@ -44,7 +44,6 @@ const initDatabase = async () => {
 };
 
 initDatabase()
-
 
 
 app.listen(config.port, () => {
