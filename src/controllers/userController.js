@@ -11,8 +11,8 @@ const getAllUsers = async () => {
     });
     return data;
   } catch (error) {
-    console.error("Error en getAllUsers:", error);
-    throw new Error("No se pudieron obtener los usuarios.");
+    console.error("Error in getAllUsers:", error);
+    throw new Error("Could not retrieve users.");
   }
 };
 
@@ -26,13 +26,12 @@ const getUserById = async (id) => {
     });
     return data;
   } catch (error) {
-    console.error("Error en getUserById:", error);
-    throw new Error(`No se pudo obtener el usuario con ID: ${id}`);
+    console.error("Error in getUserById:", error);
+    throw new Error(`Could not retrieve user with ID: ${id}`);
   }
 };
 
 const createUser = async (data) => {
-
   const hashedPassword = await hashPassword(data.password);
 
   const newUser = await Users.create({
@@ -40,7 +39,7 @@ const createUser = async (data) => {
     firstName: data.firstName,
     lastName: data.lastName,
     email: data.email,
-    password: hashedPassword, // Usa el hash de la contraseña
+    password: hashedPassword, // Use the hashed password
     phone: data.phone,
     birthday: data.birthday,
   });
@@ -56,12 +55,12 @@ const updateUser = async (id, data) => {
     });
     return result;
   } catch (error) {
-    console.error("Error en updateUser:", error);
-    throw new Error("No se pudo actualizar el usuario.");
+    console.error("Error in updateUser:", error);
+    throw new Error("Could not update the user.");
   }
 };
 
-const deleteUsersById = async (id) => {
+const deleteUserById = async (id) => {
   try {
     const data = await Users.destroy({
       where: {
@@ -70,8 +69,8 @@ const deleteUsersById = async (id) => {
     });
     return data;
   } catch (error) {
-    console.error("Error en deleteUsersById:", error);
-    throw new Error("No se pudo eliminar el usuario.");
+    console.error("Error in deleteUserById:", error);
+    throw new Error("Could not delete the user.");
   }
 };
 
@@ -85,30 +84,32 @@ const getUserByEmail = async (email) => {
     });
     return data;
   } catch (error) {
-    console.error("Error en getUserByEmail:", error);
-    throw new Error(`No se pudo obtener el usuario con el correo: ${email}`);
+    console.error("Error in getUserByEmail:", error);
+    throw new Error(`Could not retrieve user with email: ${email}`);
   }
 };
 
-const updateUserRoleServise = async (id, role) => {
+const updateUserRoleService = async (id, role) => {
   try {
-    const user = await Users.findByPk(id)
-    user.role = role
-    await user.save()
-
+    const user = await Users.findByPk(id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    user.role = role;
+    await user.save();
+    return user;
   } catch (error) {
-    console.error("Error updating user role:", error);
-    throw new Error("Error updating role")
+    console.error("Error in updateUserRoleService:", error);
+    throw new Error("Could not update user role.");
   }
-}
-
+};
 
 module.exports = {
   getAllUsers,
   getUserById,
   createUser,
   updateUser,
-  deleteUsersById,
+  deleteUserById,
   getUserByEmail,
-  updateUserRoleServise
+  updateUserRoleService
 };

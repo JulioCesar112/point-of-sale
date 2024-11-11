@@ -134,15 +134,15 @@ const updateUserRole = async (req, res) => {
 
   const allowedRoles = ["normal", "admin"]
   if (!allowedRoles.includes(role)) {
-    throw new Error("Invalid role")
+    return res.status(401).json({message:"Invalid role"})
   }
   
   try {
     if (isAdmin !== "admin") {
       return res.status(401).json({ message: "You do not have permissing to change roles" })
     }
-    const updateRole = await userController.updateUserRoleServise(id, role)
-    return res.status(200).jsn({message:`User role update to ${updateRole.role}`})
+    const updateRole = await userController.updateUserRoleService(id, role)
+    return res.status(200).json({message:`User role update to ${updateRole.role}`})
   } catch (error) {
     console.error("Error updating user role:", error);
   }
