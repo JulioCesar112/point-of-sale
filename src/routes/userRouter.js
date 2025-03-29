@@ -10,8 +10,6 @@ const { adminValidate } = require("../middlewares/isAdmin");
 //! Root Routes
 router.get("/", userService.getAllUsers)
 
-router.post("/", userService.registerUser)
-
 //? Ruta de informacion propia del usuario logeado 
 router.route("/me")
   .get(passport.authenticate("jwt", { session: false }), userService.getMyUser)
