@@ -8,4 +8,8 @@ router
   .get(categoryService.getAllCategory)
   .post(categoryService.createCategory);
 
+router
+  .route("/:id")
+  .delete(categoryService.deleteCategoryById)
+  .patch(categoryService.updateCategory);
 module.exports = router;

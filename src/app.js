@@ -19,6 +19,7 @@ const db = require("./config/database");
 const userRouter = require("./routes/userRouter");
 const authRouter = require("./routes/authRouter");
 const categoryRouter = require("./routes/categoryRouter");
+const productRouter = require("./routes/productRouter");
 
 const initModels = require("./models/initModels");
 
@@ -32,7 +33,8 @@ app.use(express.json());
 const apiRouter = express.Router();
 apiRouter.use("/users", userRouter);
 apiRouter.use("/auth", authRouter);
-apiRouter.use("/category", categoryRouter);
+apiRouter.use("/categories", categoryRouter);
+apiRouter.use("/products", productRouter);
 
 app.use("/api/v1", apiRouter);
 

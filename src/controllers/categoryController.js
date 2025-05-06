@@ -53,9 +53,24 @@ const deleteCategoryById = async (id) => {
   }
 };
 
+const updateCategory = async (id, data) => {
+  try {
+    const result = await Category.update(data, {
+      where: {
+        id,
+      },
+    });
+    return result;
+  } catch (error) {
+    console.error("Error in updatecategory:", error);
+    throw new Error("Could not update the category.");
+  }
+};
+
 module.exports = {
   getAllCategories,
   getCategoryById,
   createCategory,
   deleteCategoryById,
+  updateCategory,
 };
