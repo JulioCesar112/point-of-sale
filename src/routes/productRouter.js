@@ -7,6 +7,10 @@ router
   .get(productService.getAllProducts)
   .post(productService.postProduct);
 
-router.route("/:id").delete(productService.deleteProduct);
+router
+  .route("/:id")
+  .get(productService.getProductById)
+  .delete(productService.deleteProduct)
+  .patch(productService.updateProduct);
 
 module.exports = router;

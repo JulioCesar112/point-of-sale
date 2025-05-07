@@ -1,4 +1,5 @@
 const productController = require("../controllers/productController");
+const Products = require("../models/productModel");
 
 const getAllProducts = async (req, res) => {
   try {
@@ -34,15 +35,32 @@ const postProduct = async (req, res) => {
   }
 };
 
+const getProductById = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const data = await productController.getProductById(id);
+    if (data) {
+      return res.status(200).json(data);
+    } else {
+      return res.status(400).json({ message: "Invalid ID" });
+    }
+  } catch (error) {
+    console.error("Error in getProductById:", error.message);
+    return res.status(500).json({ message: "Error retrieving the product" });
+  }
+};
+
 const deleteProduct = async (req, res) => {
   const id = req.params.id;
-  if (!id) {
-    return res
-      .status(404)
-      .json({ message: `product with id: ${id} not found` });
-  }
   try {
     const data = await productController.deleteProductById(id);
+    if (data) {
+      return res
+        .status(200)
+        .json({ message: "Your product was delete successful" });
+    } else {
+      return res.status(400).json({ message: "Invalid ID" });
+    }
     return res.status(204).end();
   } catch (error) {
     console.error("Error en deleteUsers", err.message);
@@ -52,8 +70,24 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+const updateProduct = async (id, data) => {
+  try {
+    const [result] = await Products.update(data, {
+      where: {
+        id,
+      },
+    });
+    return result > 0;
+  } catch (error) {
+    console.error("Error in updateProduct:", error);
+    throw new Error("Could not update the Product.");
+  }
+};
+
 module.exports = {
   getAllProducts,
   postProduct,
   deleteProduct,
+  getProductById,
+  updateProduct,
 };
