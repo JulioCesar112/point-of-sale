@@ -10,6 +10,7 @@ router
 
 router
   .route("/:id")
+  .get(categoryService.getCategoryById)
   .delete(categoryService.deleteCategoryById)
   .patch(categoryService.updateCategory);
 module.exports = router;

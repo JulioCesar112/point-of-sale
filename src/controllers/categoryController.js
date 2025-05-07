@@ -46,7 +46,7 @@ const deleteCategoryById = async (id) => {
     const deletedCount = await Category.destroy({
       where: { id },
     });
-    return deletedCount; // devuelve cuántos registros fueron eliminados
+    return deletedCount;
   } catch (error) {
     console.error("Error in deleteCategoryById:", error);
     throw new Error("Could not delete category");
@@ -55,12 +55,12 @@ const deleteCategoryById = async (id) => {
 
 const updateCategory = async (id, data) => {
   try {
-    const result = await Category.update(data, {
+    const [result] = await Category.update(data, {
       where: {
         id,
       },
     });
-    return result;
+    return result > 0;
   } catch (error) {
     console.error("Error in updatecategory:", error);
     throw new Error("Could not update the category.");

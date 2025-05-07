@@ -13,16 +13,33 @@ const getAllCategory = async (req, res) => {
 
 const createCategory = async (req, res) => {
   const { name, description } = req.body;
-  if ((!name, !description)) {
+  if (!name || !description) {
     return res.status(400).json({ message: "All fields are required" });
   }
   try {
-    const data = categoryController.createCategory({ name, description });
-    return res.status(200).json({ message: `Category created successful` });
+    const data = await categoryController.createCategory({ name, description });
+    return res
+      .status(200)
+      .json({ message: `Category created successful`, category: data });
   } catch (error) {
     return res
       .status(500)
       .json({ message: "An error occurred while create category" });
+  }
+};
+
+const getCategoryById = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const data = await categoryController.getCategoryById(id);
+    if (data) {
+      return res.status(200).json(data);
+    } else {
+      return res.status(400).json("Invalid ID");
+    }
+  } catch (error) {
+    console.error("Error in getCategoryById:", error.message);
+    return res.status(500).json({ message: "Error retrieving the category" });
   }
 };
 
@@ -31,17 +48,15 @@ const deleteCategoryById = async (req, res) => {
 
   try {
     const data = await categoryController.deleteCategoryById(id);
-    if (!data) {
+    if (data) {
       return res
-        .status(404)
-        .json({ message: `Category with id ${id} not found` });
+        .status(200)
+        .json({ message: "Your category was delete successful" });
+    } else {
+      return res.status(400).json({ message: "Invalid ID" });
     }
-
-    return res
-      .status(200)
-      .json({ message: "your category was deleted successful" });
   } catch (error) {
-    console.error("Erroren deleteCategory", error.message);
+    console.error("Error in deleteCategory", error.message);
     return res
       .status(500)
       .json({ message: "An error occurred while deleting the user" });
@@ -57,9 +72,11 @@ const updateCategory = async (req, res) => {
       name,
       description,
     });
-    return res
-      .status(200)
-      .json({ message: "Your category was updated successful" });
+    if (data) {
+      return res.status(200).json({ message: "Category updated successfully" });
+    } else {
+      return res.status(400).json({ message: "Invalid ID or no changes made" });
+    }
   } catch (error) {
     console.error(error);
     res
@@ -70,6 +87,7 @@ const updateCategory = async (req, res) => {
 
 module.exports = {
   getAllCategory,
+  getCategoryById,
   createCategory,
   deleteCategoryById,
   updateCategory,
