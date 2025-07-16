@@ -30,13 +30,11 @@ app.use(cors());
 app.use(express.json());
 
 // Rutes
-const apiRouter = express.Router();
-apiRouter.use("/users", userRouter);
-apiRouter.use("/auth", authRouter);
-apiRouter.use("/categories", categoryRouter);
-apiRouter.use("/products", productRouter);
+app.use("/users", userRouter);
+app.use("/auth", authRouter);
+app.use("/categories", categoryRouter);
+app.use("/products", productRouter);
 
-app.use("/api/v1", apiRouter);
 
 // Connection to the database
 const initDatabase = async () => {
