@@ -20,6 +20,7 @@ const userRouter = require("./routes/userRouter");
 const authRouter = require("./routes/authRouter");
 const categoryRouter = require("./routes/categoryRouter");
 const productRouter = require("./routes/productRouter");
+const salesRouter = require("./routes/salesRoutes");
 
 const initModels = require("./models/initModels");
 
@@ -30,12 +31,14 @@ app.use(cors());
 app.use(express.json());
 
 // Rutes
+app.get("/", (req, res) => {
+  res.send("Welcome to the E-commerce API");
+});
 app.use("/users", userRouter);
 app.use("/auth", authRouter);
 app.use("/categories", categoryRouter);
 app.use("/products", productRouter);
-
-
+app.use("/sales", salesRouter);
 // Connection to the database
 const initDatabase = async () => {
   try {
