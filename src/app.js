@@ -11,6 +11,10 @@ const cors = require("cors");
 const config = require("./config/env");
 const db = require("./config/database");
 
+// Swager imports
+const swaggerUi = require("swagger-ui-express");
+const YAML = require("yamljs");
+
 /*
   Router imports:
   - userRouter: routes for user management
@@ -21,6 +25,8 @@ const authRouter = require("./routes/authRouter");
 const categoryRouter = require("./routes/categoryRouter");
 const productRouter = require("./routes/productRouter");
 const salesRouter = require("./routes/salesRoutes");
+// IMPORTAMOS SWAGGER
+const swaggerDocument = YAML.load("./docs/swagger.yaml");
 
 const initModels = require("./models/initModels");
 
@@ -39,6 +45,8 @@ app.use("/auth", authRouter);
 app.use("/categories", categoryRouter);
 app.use("/products", productRouter);
 app.use("/sales", salesRouter);
+// Swagger setup
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // Connection to the database
 const initDatabase = async () => {
   try {

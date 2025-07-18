@@ -1,0 +1,500 @@
+openapi: 3.0.3
+info:
+  title: point-of-sale-api
+  version: 1.0.0
+  description: API para productos, usuarios, autenticación, ventas y categorías con control de acceso por roles.
+
+servers:
+  - url: http://localhost:3000
+    description: Servidor local
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: JWT
+      bearerFormat: JWT
+
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: float
+        stock:
+          type: integer
+        imageUrl:
+          type: string
+        categoryId:
+          type: integer
+      required:
+        - name
+        - price
+        - categoryId
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        birthday:
+          type: string
+          format: date
+        status:
+          type: string
+        role:
+          type: string
+          enum: [user, admin]
+        isVerified:
+          type: boolean
+
+    UserInput:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - email
+        - password
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        phone:
+          type: string
+        birthday:
+          type: string
+          format: date
+
+    AuthRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+
+    Sale:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        Date:
+          type: string
+          format: date-time
+        userId:
+          type: string
+          format: uuid
+        total:
+          type: number
+          format: float
+        status:
+          type: string
+          enum: [pending, completed, cancelled]
+
+    SaleDetails:
+      type: object
+      properties:
+        saleId:
+          type: string
+          format: uuid
+        productId:
+          type: string
+          format: uuid
+        quantity:
+          type: integer
+        price:
+          type: number
+          format: float
+        subtotal:
+          type: number
+          format: float
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+      required:
+        - name
+
+security:
+  - bearerAuth: []
+
+paths:
+  /products:
+    get:
+      summary: Obtener todos los productos (solo admin)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de productos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '401':
+          description: No autorizado
+    post:
+      summary: Crear un producto (solo admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Producto creado
+        '401':
+          description: No autorizado
+
+  /products/{id}:
+    get:
+      summary: Obtener producto por ID (solo admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Producto encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Producto no encontrado
+        '401':
+          description: No autorizado
+    patch:
+      summary: Actualizar producto (solo admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Producto actualizado
+        '401':
+          description: No autorizado
+    delete:
+      summary: Eliminar producto (solo admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Producto eliminado
+        '401':
+          description: No autorizado
+
+  /users:
+    get:
+      summary: Obtener todos los usuarios normales (solo admin)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de usuarios normales
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '401':
+          description: No autorizado
+    patch:
+      summary: Actualizar usuario (solo admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Usuario actualizado
+        '401':
+          description: No autorizado
+    delete:
+      summary: Eliminar usuario (solo admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Usuario eliminado
+        '401':
+          description: No autorizado
+
+  /users/me:
+    get:
+      summary: Obtener datos del usuario autenticado
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Datos del usuario autenticado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: No autorizado
+
+  /auth/register:
+    post:
+      summary: Registrar usuario nuevo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInput'
+      responses:
+        '201':
+          description: Usuario registrado
+
+  /auth/login:
+    post:
+      summary: Login de usuario, retorna token JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthRequest'
+      responses:
+        '200':
+          description: Login exitoso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  /sales:
+    post:
+      summary: Crear una venta (usuario normal)
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Venta creada
+
+  /sales/{id}/details:
+    post:
+      summary: Agregar detalles a una venta (usuario normal)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaleDetails'
+      responses:
+        '201':
+          description: Detalles agregados a la venta
+
+  /sales/{id}/finalize:
+    patch:
+      summary: Finalizar venta (usuario normal)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Venta finalizada correctamente
+
+  /sales/{id}:
+    get:
+      summary: Obtener venta por ID (solo admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Venta encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sale'
+        '401':
+          description: No autorizado
+    patch:
+      summary: Actualizar venta (solo admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sale'
+      responses:
+        '200':
+          description: Venta actualizada
+        '401':
+          description: No autorizado
+    delete:
+      summary: Eliminar venta (solo admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Venta eliminada
+        '401':
+          description: No autorizado
+
+  /categories:
+    get:
+      summary: Obtener todas las categorías (solo admin)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de categorías
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+    post:
+      summary: Crear categoría (solo admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+      responses:
+        '201':
+          description: Categoría creada
+    patch:
+      summary: Actualizar categoría (solo admin)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+      responses:
+        '200':
+          description: Categoría actualizada
+    delete:
+      summary: Eliminar categoría (solo admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Categoría eliminada
