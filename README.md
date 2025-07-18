@@ -1,4 +1,4 @@
-# 🛍️ E-commerce API
+# 🛍️Point-of-sale API
 
 This is a backend RESTful API for an e-commerce platform built with **Node.js**, **Express**, **Sequelize**, and **PostgreSQL**. It includes features such as authentication, category management, and role-based access control.
 
