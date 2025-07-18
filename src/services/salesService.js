@@ -10,19 +10,24 @@ const getAllSales = async (req, res) => {
     }
 }
 const postSale = async (req, res) => {
-    const { Date, userId } = req.body;
+  const userId = req.user.id;
+    if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+    }
 
-    if (!Date || !userId) {
-        return res.status(400).json({ message: "All fields are required" });
-    }
-    try {
-        const data = await salesController.createSale({ Date, userId });
-        return res.status(200).json(data);
-    } catch (error) {
-        console.error("Error in postSale service", error);
-        return res.status(500).json({ message: "An error occurred while creating the sale" });
-    }
-}
+  if (!userId) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  try {
+    const data = await salesController.createSale({ userId});
+    return res.status(201).json(data);
+  } catch (error) {
+    console.error("Error in postSale controller", error);
+    return res.status(500).json({ message: "An error occurred while creating the sale" });
+  }
+};
+
 
 const getSaleById = async (req, res) => {
     const id = req.params.id;
@@ -53,24 +58,32 @@ const deleteSale = async (req, res) => {
         return res.status(500).json({ message: `Could not delete sale with ID: ${id}` });
     }
 }
-
 const updateSale = async (req, res) => {
     const id = req.params.id;
-    const { Date, userId } = req.body;
-
-    if (!Date || !userId) {
-        return res.status(400).json({ message: "All fields are required" });
-    }
+    const data = req.body;
     try {
-        const data = await salesController.updateSale(id, { Date, userId });
-        if (data[0] === 1) {
+        const result = await salesController.updateSale(id, data);
+        if (result) {
             return res.status(200).json({ message: "Sale updated successfully" });
+        }
+        return res.status(400).json({ message: "Invalid ID or data" });
+    } catch (error) {
+        console.error("Error in updateSale:", error);
+        return res.status(500).json({ message: "Could not update the sale." });
+    }
+}
+const finalizeSale = async (req, res) => {
+    const id = req.params.id;
+    try {
+        const data = await salesController.updateSale(id, { status: 'completed' });
+        if (data) {
+            return res.status(200).json({ message: "Sale finalized successfully" });
         } else {
-            return res.status(400).json({ message: "Invalid ID or no changes made" });
+            return res.status(400).json({ message: "Invalid ID" });
         }
     } catch (error) {
-        console.error("Error in updateSale", error);
-        return res.status(500).json({ message: `Could not update sale with ID: ${id}` });
+        console.error("Error in finalizeSale", error);
+        return res.status(500).json({ message: `Could not finalize sale with ID: ${id}` });
     }
 }
 
@@ -79,5 +92,6 @@ module.exports = {
     postSale,
     getSaleById,
     deleteSale,
+    finalizeSale,
     updateSale
 };

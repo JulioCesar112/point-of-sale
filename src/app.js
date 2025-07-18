@@ -32,7 +32,7 @@ app.use(express.json());
 
 // Rutes
 app.get("/", (req, res) => {
-  res.send("Welcome to the E-commerce API");
+  res.status(200).json({message:"Welcome to the E-commerce API"});
 });
 app.use("/users", userRouter);
 app.use("/auth", authRouter);
@@ -46,7 +46,7 @@ const initDatabase = async () => {
     console.log(
       "Connection to the database has been established successfully."
     );
-    await db.sync({ alter: true });
+    await db.sync({ alert: true });
     console.log("DB Synced");
     await initModels();
   } catch (err) {

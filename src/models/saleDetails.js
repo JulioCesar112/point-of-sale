@@ -6,6 +6,7 @@ const Products = require("./productModel")
 const SaleDetails = db.define("saleDetails", {
     id: {
         type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
         allowNull: false
     },
@@ -29,12 +30,17 @@ const SaleDetails = db.define("saleDetails", {
     },
     quantity: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        defaultValue: 1
     },
     price: {
         type: DataTypes.FLOAT,
         allowNull: false
-    }   
+    },
+    subtotal: {
+        type: DataTypes.FLOAT,
+        allowNull: false
+    }
 })
 
 module.exports = SaleDetails

@@ -12,10 +12,11 @@ const getAllProducts = async () => {
     });
     return data;
   } catch (error) {
-    console.error("Error in getAllProduts", error);
-    throw new Error("could not retrive Products");
+    console.error("Error in getAllProducts", error);
+    throw new Error("could not retrieve Products");
   }
 };
+
 
 const createProduct = async (data) => {
   try {

@@ -12,17 +12,16 @@ const getAllSales = async () => {
 }
 
 const createSale = async (data) => {
-    try {
-        const newSale = await Sales.create({
-            Date: data.Date,
-            userId: data.userId,
-        });
-        return newSale;
-    } catch (error) {
-        console.error("Error in createSale", error);
-        throw new Error("Could not create sale");
-    }
-}
+  try {
+    const newSale = await Sales.create({
+      userId: data.userId,
+    });
+    return newSale;
+  } catch (error) {
+    console.error("Error in createSale", error);
+    throw new Error("Could not create sale");
+  }
+};
 
 const getSaleById = async (id) => {
     try {

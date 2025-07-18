@@ -27,8 +27,8 @@ const Products = db.define("product", {
     allowNull: false,
     field: "categoryId",
     references: {
-      key: "id",
       model: Category,
+      key: "id",
     },
   },
 });
