@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "api-pointofsale",
+      name: "porject-name",
       script: "src/app.js",
       env_production: {
         NODE_ENV: "production",
