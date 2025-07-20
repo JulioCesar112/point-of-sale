@@ -6,12 +6,12 @@ module.exports = {
       env_production: {
         NODE_ENV: "production",
         PORT: 3000,
-        DB_USER: "pointofsale_user",
-        DB_NAME: "pointofsale_db",
+        DB_USER: "database_user",
+        DB_NAME: "databasename_db",
         DB_HOST: "localhost",
-        DB_PASS: "kQtN~QM%3nbXp+VQFJ$",
+        DB_PASS: "password",
         DATABASE_URL: "",
-        JWT_SECRET: "kQtN~QM%3nbXp+VQFJ$"
+        JWT_SECRET: "secretkey"
       }
     }
   ]
