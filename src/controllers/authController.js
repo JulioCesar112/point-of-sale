@@ -16,9 +16,10 @@ const loginUser = async (email, password) => {
       };
     }
 
-    const verifyPassword = comparePassword(password, user.password);
+    const verifyPassword = await comparePassword(password, user.password);
     if (verifyPassword) {
-      return { success: true, user };
+      // Retorna estado de éxito y el usuario
+        return { success: true, user };
     }
     return { success: false, message: "Invalid password." };
 

@@ -38,7 +38,7 @@ app.use(express.json());
 
 // Rutes
 app.get("/", (req, res) => {
-  res.status(200).json({message:"Welcome to the E-commerce API"});
+  res.status(200).json({message:"Welcome to the Post Of Sale API"});
 });
 app.use("/users", userRouter);
 app.use("/auth", authRouter);
