@@ -17,11 +17,11 @@ const loginUser = async (email, password) => {
     }
 
     const verifyPassword = await comparePassword(password, user.password);
-    if (verifyPassword) {
-      // Retorna estado de éxito y el usuario
-        return { success: true, user };
+    if (!verifyPassword) {
+      return { success: false, message: "Invalid password." };
     }
-    return { success: false, message: "Invalid password." };
+    // retorna status exito y dato
+    return { success: true, user };
 
   } catch (error) {
     console.error('Login error:', error);
