@@ -1,4 +1,4 @@
-const userController = required("../controllers/userController")
+const userController = require("../controllers/userController")
 
 
 const getAllUsers = async (req, res) => {
