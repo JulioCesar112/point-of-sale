@@ -1,4 +1,4 @@
-const userController = require("../controllers/userController")
+const userController = required("../controllers/userController")
 
 
 const getAllUsers = async (req, res) => {
@@ -49,7 +49,7 @@ const deleteUser = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const data = await userController.deleteUsersById(id);
+    const data = await userController.deleteUserById(id);
     if (data) {
       return res.status(204).end(); // 204 No Content, no hace falta un JSON
     } else {
@@ -119,7 +119,7 @@ const deleteMyUser = async (req, res) => {
   const id = req.user.id;
 
   try {
-    await userController.deleteUsersById(id, { status: "inactive" });
+    await userController.deleteUserById(id, { status: "inactive" });
     return res.status(200).json({ message: `your user was deleted successfuly` });
   } catch (error) {
     console.error(error);
